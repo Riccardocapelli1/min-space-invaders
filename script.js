@@ -28,7 +28,6 @@ for (let i = 0; i < enemyCount; i++) {
 
 // Bullets
 let playerBullets = [];
-let enemyBullets = [];
 
 // Game loop
 function update() {
@@ -59,41 +58,21 @@ function update() {
         }
     }
 
-    // Shoot enemy bullets
-    if (Math.random() < 0.05) {
-        let enemy = enemies[Math.floor(Math.random() * enemyCount)];
-        enemyBullets.push({
-            x: enemy.x + (enemySize / 2),
-            y: enemy.y + enemySize
-        });
-    }
-
     // Move bullets
-    for (let bullet of playerBullets) {
-        bullet.y -= 5;
-        if (bullet.y < 0) {
-            playerBullets.splice(playerBullets.indexOf(bullet), 1);
-        }
-    }
-    for (let bullet of enemyBullets) {
-        bullet.y += 5;
-        if (bullet.y > canvas.height) {
-            enemyBullets.splice(enemyBullets.indexOf(bullet), 1);
+    for (let i = playerBullets.length - 1; i >= 0; i--) {
+        playerBullets[i].y -= 5;
+        if (playerBullets[i].y < 0) {
+            playerBullets.splice(i, 1);
         }
     }
 
     // Check collisions
-    for (let bullet of playerBullets) {
-        for (let enemy of enemies) {
-            if (checkCollision(bullet, enemy)) {
-                playerBullets.splice(playerBullets.indexOf(bullet), 1);
-                enemies.splice(enemies.indexOf(enemy), 1);
+    for (let i = playerBullets.length - 1; i >= 0; i--) {
+        for (let j = enemies.length - 1; j >= 0; j--) {
+            if (checkCollision(playerBullets[i], enemies[j])) {
+                playerBullets.splice(i, 1);
+                enemies.splice(j, 1);
             }
-        }
-    }
-    for (let bullet of enemyBullets) {
-        if (checkCollision(bullet, { x: playerX, y: playerY, width: playerSize, height: playerSize })) {
-            enemyBullets.splice(enemyBullets.indexOf(bullet), 1);
         }
     }
 
@@ -109,23 +88,17 @@ function update() {
         ctx.fillStyle = 'green';
         ctx.fillRect(bullet.x, bullet.y, bulletSize, bulletSize);
     }
-    for (let bullet of enemyBullets) {
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(bullet.x, bullet.y, bulletSize, bulletSize);
-    }
 }
 
 // Handle key presses
 let leftPressed = false;
 let rightPressed = false;
-let spacePressed = false;
 document.addEventListener('keydown', (event) => {
     if (event.keyCode === 37) {
         leftPressed = true;
     } else if (event.keyCode === 39) {
         rightPressed = true;
     } else if (event.keyCode === 32) {
-        spacePressed = true;
         playerBullets.push({
             x: playerX + (playerSize / 2),
             y: playerY
@@ -137,16 +110,14 @@ document.addEventListener('keyup', (event) => {
         leftPressed = false;
     } else if (event.keyCode === 39) {
         rightPressed = false;
-    } else if (event.keyCode === 32) {
-        spacePressed = false;
     }
 });
 
 // Check for collisions
 function checkCollision(rect1, rect2) {
-    if (rect1.x < rect2.x + rect2.width &&
-        rect1.x + rect1.width > rect2.x &&
-        rect1.y < rect2.y + rect2.height &&
+    if (rect1.x < rect2.x + enemySize &&
+        rect1.x + bulletSize > rect2.x &&
+        rect1.y < rect2.y + enemySize &&
         rect1.height + rect1.y > rect2.y) {
         return true;
     }
