@@ -1,0 +1,23 @@
+/* Global Styles */
+
+body {
+    background-color: #333;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #fff;
+    font-size: 36px;
+    text-align: center;
+}
+
+/* Canvas Styles */
+
+#canvas {
+    background-color: #000;
+    border: 1px solid #fff;
+    margin: 20px auto;
+    display: block;
+}
